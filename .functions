@@ -67,7 +67,7 @@ targz() {
 }
 
 # Determine size of a file or total size of a directory
-fs() {
+fsz() {
 	if du -b /dev/null > /dev/null 2>&1; then
 		local arg=-sbh
 	else
@@ -159,23 +159,6 @@ escape() {
 	fi
 }
 
-# Decode \x{ABCD}-style Unicode escape sequences
-unidecode() {
-	perl -e "binmode(STDOUT, ':utf8'); print \"$*\""
-	# print a newline unless we’re piping the output to another program
-	if [ -t 1 ]; then
-		echo ""; # newline
-	fi
-}
-
-# Get a character’s Unicode code point
-codepoint() {
-	perl -e "use utf8; print sprintf('U+%04X', ord(\"$*\"))"
-	# print a newline unless we’re piping the output to another program
-	if [ -t 1 ]; then
-		echo ""; # newline
-	fi
-}
 
 # Show all the names (CNs and SANs) listed in the SSL certificate
 # for a given domain
@@ -307,7 +290,7 @@ man() {
 }
 
 # Use feh to nicely view images
-openimage() {
+openimg() {
 	local types='*.jpg *.JPG *.png *.PNG *.gif *.GIF *.jpeg *.JPEG'
 
 	cd "$(dirname "$1")" || exit
@@ -462,13 +445,13 @@ restart_gpgagent(){
 	gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 }
 
-gitsetoriginnopush() {
-	git remote set-url --push origin no_push
+hmrandr() {
+	# This function sets the xrandr display modes for my desk in NYC.
+	xrandr	--output HDMI-0 --primary --mode 1360x768 --rate 60
 }
 
-homeMonitorSetup() {
+ofirandr() {
 	# This function sets the xrandr display modes for my desk in NYC.
-	xrandr --output eDP-1 --primary --mode 3840x2160 --rate 60 --below DP-2-2 \
-		--output DP-2-2 --mode 3840x2160 --rate 60  --rotate normal --pos 0x900  \
-		--output DP-1-2 --mode 3840x2160 --rate 60  --rotate left --pos 3840x0
+	xrandr --output eDP-1 --mode 1366x720  --rate 60 \
+		--output HDMI-0 --primary --mode x1360x768 --rate 60
 }

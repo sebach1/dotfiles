@@ -28,39 +28,14 @@ This will create symlinks from this repo to your home folder.
 
 ### Customizing
 
-Save env vars, etc in a `.extra` file, that looks something like
-this:
-
-```bash
-###
-### Git credentials
-###
-
-GIT_AUTHOR_NAME="Your Name"
-GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
-git config --global user.name "$GIT_AUTHOR_NAME"
-GIT_AUTHOR_EMAIL="email@you.com"
-GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-git config --global user.email "$GIT_AUTHOR_EMAIL"
-GH_USER="nickname"
-git config --global github.user "$GH_USER"
-
-###
-### Gmail credentials for mutt
-###
-export GMAIL=email@you.com
-export GMAIL_NAME="Your Name"
-export GMAIL_FROM=from-email@you.com
-```
+Mod env vars, etc in the `./.extra` file.
 
 ## Resources
 
 ### `.vim`
 
 For my `.vimrc` and `.vim` dotfiles see
-[github.com/jessfraz/.vim](https://github.com/jessfraz/.vim).
-
-## Contributing
+[github.com/sebach1/.vim](https://github.com/sebach1/.vim).
 
 ### Running the tests
 
@@ -70,3 +45,77 @@ need to install anything. They run in a container.
 ```console
 $ make test
 ```
+
+## CMD
+
+Explanation:
+ - genuinetools: taken from github.com/genuinetools
+ - #: declared in ./bin
+ - *: declared in ./.functions
+ - +: declared in ./.dockerfunc
+
+### Bash
+
+speedtest
+weather (genuinetools)
+udict (genuinetools)
+tdash
+afk
+screen-backlight (#)
+slackpm (#)
+update-firmware (#)
+mkd (*)
+calc (*)
+tmpd (*)
+fsz (*)
+dataurl (*)
+gitio (*)
+server (*)
+json (*)
+mwiki (*)
+escape (*)
+openimg*)
+gogo (*)
+golistdeps (*)
+govendorcheck (*)
+
+
+### Git
+
+check-go-repos (#)
+pepper
+icdiff
+
+### Go IDE
+
+goimports
+gorename
+golint
+guru
+gopls
+cover
+staticcheck
+golangci-lint
+gotags
+gocode
+godef
+
+### Infra
+
+getcertnames(*)
+amicontained
+certok (genuinetools)
+reg (genuinetools)
+browser-exec (#) 
+cleanup-non-running-images (#) 
+del_stopped (+)
+rmctr (+)
+relies_on (+)
+
+### Other
+
+hmrandr (*)
+ofirandr (*)
+gmailfilters
+sembump
+htotheizzg

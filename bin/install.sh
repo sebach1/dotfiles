@@ -3,9 +3,7 @@ set -e
 set -o pipefail
 
 # install.sh
-#	This script installs my basic setup for a debian laptop
-
-export DEBIAN_FRONTEND=noninteractive
+#	This script installs my basic setup for a ubuntu pc
 
 # Choose a user account to use for this installation
 get_user() {
@@ -70,22 +68,12 @@ setup_sources_min() {
 }
 
 # sets up apt sources
-# assumes you are going to use debian buster
+# assumes you are going to use ubuntu
 setup_sources() {
 	setup_sources_min;
 
 	cat <<-EOF > /etc/apt/sources.list
-	deb http://httpredir.debian.org/debian buster main contrib non-free
-	deb-src http://httpredir.debian.org/debian/ buster main contrib non-free
-
-	deb http://httpredir.debian.org/debian/ buster-updates main contrib non-free
-	deb-src http://httpredir.debian.org/debian/ buster-updates main contrib non-free
-
-	deb http://security.debian.org/ buster/updates main contrib non-free
-	deb-src http://security.debian.org/ buster/updates main contrib non-free
-
-	deb http://httpredir.debian.org/debian experimental main contrib non-free
-	deb-src http://httpredir.debian.org/debian experimental main contrib non-free
+	deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse
 	EOF
 
 	# yubico
@@ -166,6 +154,7 @@ base_min() {
 		ssh \
 		strace \
 		sudo \
+		lua5.2 \
 		tar \
 		tree \
 		tzdata \
@@ -174,6 +163,13 @@ base_min() {
 		xz-utils \
 		zip \
 		--no-install-recommends
+
+	# install vscode
+	if ! [ -x "$(command -v code)" ]; then
+		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB3E94ADBE1229CF
+		add-apt-repository -y "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+		apt install	-y code
+	fi
 
 	apt autoremove
 	apt autoclean
@@ -327,31 +323,25 @@ install_golang() {
 	go get golang.org/x/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get golang.org/x/tools/cmd/gopls
-	go get golang.org/x/review/git-codereview
 	go get golang.org/x/tools/cmd/goimports
 	go get golang.org/x/tools/cmd/gorename
 	go get golang.org/x/tools/cmd/guru
 
 	go get github.com/genuinetools/amicontained
 	go get github.com/genuinetools/apk-file
-	go get github.com/genuinetools/audit
-	go get github.com/genuinetools/bpfd
-	go get github.com/genuinetools/bpfps
-	go get github.com/genuinetools/certok
-	go get github.com/genuinetools/netns
 	go get github.com/genuinetools/pepper
+	go get github.com/genuinetools/certok
 	go get github.com/genuinetools/reg
 	go get github.com/genuinetools/udict
 	go get github.com/genuinetools/weather
 
 	go get github.com/jessfraz/gmailfilters
 	go get github.com/jessfraz/junk/sembump
-	go get github.com/jessfraz/secping
-	go get github.com/jessfraz/ship
 	go get github.com/jessfraz/tdash
 
 	go get github.com/axw/gocov/gocov
 	go get honnef.co/go/tools/cmd/staticcheck
+	go get github.com/golangci/golangci-lint
 
 	# Tools for vimgo.
 	go get github.com/jstemmer/gotags
@@ -393,12 +383,11 @@ install_golang() {
 
 	# do special things for k8s GOPATH
 	mkdir -p "${GOPATH}/src/k8s.io"
-	kubes_repos=( community kubernetes release sig-release )
+	kubes_repos=( kubernetes )
 	for krepo in "${kubes_repos[@]}"; do
 		git clone "https://github.com/kubernetes/${krepo}.git" "${GOPATH}/src/k8s.io/${krepo}"
 		cd "${GOPATH}/src/k8s.io/${krepo}"
 		git remote set-url --push origin no_push
-		git remote add jessfraz "https://github.com/jessfraz/${krepo}.git"
 	done
 	)
 
@@ -451,9 +440,16 @@ install_scripts() {
 	chmod +x /usr/local/bin/icdiff
 	chmod +x /usr/local/bin/git-icdiff
 
-	# install lolcat
-	curl -sSL https://raw.githubusercontent.com/tehmaze/lolcat/master/lolcat > /usr/local/bin/lolcat
-	chmod +x /usr/local/bin/lolcat
+	# install fuzzy finder (fzf)
+	if [[ ! -d "${HOME}/.fzf" ]]; then
+		git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+		~/.fzf/install
+	fi
+
+	# install z lua
+	if [[ ! -d "${HOME}/.z.lua" ]]; then
+		git clone https://github.com/skywind3000/z.lua ~/.z.lua
+	fi
 
 
 	local scripts=( have light )
@@ -509,13 +505,13 @@ get_dotfiles() {
 
 	if [[ ! -d "${HOME}/dotfiles" ]]; then
 		# install dotfiles from repo
-		git clone git@github.com:jessfraz/dotfiles.git "${HOME}/dotfiles"
+		git clone git@github.com:sebach1/dotfiles.git "${HOME}/dotfiles"
 	fi
 
 	cd "${HOME}/dotfiles"
 
 	# set the correct origin
-	git remote set-url origin git@github.com:jessfraz/dotfiles.git
+	git remote set-url origin git@github.com:sebach1/dotfiles.git
 
 	# installs all the things
 	make
@@ -540,7 +536,7 @@ install_vim() {
 
 	# install .vim files
 	sudo rm -rf "${HOME}/.vim"
-	git clone --recursive git@github.com:jessfraz/.vim.git "${HOME}/.vim"
+	git clone --recursive git@github.com:sebach1/.vim.git "${HOME}/.vim"
 	(
 	cd "${HOME}/.vim"
 	make install

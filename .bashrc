@@ -3,6 +3,9 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Turns vi mode
+set -o vi
+
 # If not running interactively, don't do anything
 case $- in
 	*i*) ;;
@@ -164,4 +167,8 @@ for file in ~/.{bash_prompt,aliases,functions,path,dockerfunc,extra,exports}; do
 	fi
 done
 unset file
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(lua ~/.z.lua/z.lua --init bash enhanced once)"
+export _ZL_ECHO=1
 

@@ -32,18 +32,6 @@ for dir in "${dirs[@]}"; do
 			make dotfiles update
 			git status
 			;;
-		"jenkins-dsl")
-			echo
-			echo "Running 'make' in jenkins-dsl repo..."
-			make
-			git status
-			;;
-		"j3ssb0t")
-			echo
-			echo "Running 'make archive model' in j3ssb0t repo..."
-			make archive model
-			git status
-			;;
 	esac
 
 	echo

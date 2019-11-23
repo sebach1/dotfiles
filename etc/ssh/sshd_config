@@ -1,4 +1,4 @@
-#	$OpenBSD: sshd_config,v 1.102 2018/02/16 02:32:40 djm Exp $
+#	$OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -10,7 +10,7 @@
 # possible, but leave them commented.  Uncommented options override the
 # default value.
 
-Port 22
+#Port 22
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
@@ -24,20 +24,20 @@ Port 22
 
 # Logging
 #SyslogFacility AUTH
-LogLevel VERBOSE
+#LogLevel INFO
 
 # Authentication:
 
-LoginGraceTime 60
-PermitRootLogin no
+#LoginGraceTime 2m
+#PermitRootLogin prohibit-password
 #StrictModes yes
 #MaxAuthTries 6
-MaxSessions 5
+#MaxSessions 10
 
-PubkeyAuthentication yes
+#PubkeyAuthentication yes
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
-AuthorizedKeysFile	.ssh/authorized_keys
+#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
 
 #AuthorizedPrincipalsFile none
 
@@ -45,16 +45,16 @@ AuthorizedKeysFile	.ssh/authorized_keys
 #AuthorizedKeysCommandUser nobody
 
 # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
-HostbasedAuthentication no
+#HostbasedAuthentication no
 # Change to yes if you don't trust ~/.ssh/known_hosts for
 # HostbasedAuthentication
 #IgnoreUserKnownHosts no
 # Don't read the user's ~/.rhosts and ~/.shosts files
-IgnoreRhosts yes
+#IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
 PasswordAuthentication no
-PermitEmptyPasswords no
+#PermitEmptyPasswords no
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)
@@ -81,12 +81,12 @@ ChallengeResponseAuthentication no
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
 # and ChallengeResponseAuthentication to 'no'.
-UsePAM no
+UsePAM yes
 
-AllowAgentForwarding yes
-AllowTcpForwarding no
+#AllowAgentForwarding yes
+#AllowTcpForwarding yes
 #GatewayPorts no
-X11Forwarding no
+X11Forwarding yes
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
@@ -96,11 +96,11 @@ PrintMotd no
 #UseLogin no
 #PermitUserEnvironment no
 #Compression delayed
-ClientAliveInterval 1800
-ClientAliveCountMax 0
+#ClientAliveInterval 0
+#ClientAliveCountMax 3
 #UseDNS no
 #PidFile /var/run/sshd.pid
-MaxStartups 2
+#MaxStartups 10:30:100
 #PermitTunnel no
 #ChrootDirectory none
 #VersionAddendum none
