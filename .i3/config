@@ -14,9 +14,15 @@ set $lockcmd i3lock
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 font pango:Monospace 8
 
+# Tiles mode (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
 # Hotkeys
-bindsym $mod+F1 exec google-chrome --force-device-scale-factor=0.85
+bindsym $mod+F1 exec google-chrome-stable --force-device-scale-factor=0.85
 bindsym $mod+F3 exec spotify
+bindsym $mod+F4 exec slack
 bindsym $mod+m exec $term -e alsamixer
 #
 # HiDPI for sway
@@ -49,9 +55,9 @@ bindsym $mod+F2 exec $menu
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# spotify: no border
-for_window [class="^Spotify$"] border none
-for_window [class="^Spotify Premium$"] border none
+# borders
+for_window [title="spotify"] border none
+for_window [title="urxvt"] border 1pixel
 
 # skype, steam, wine: float Gimp
 # for_window [class="Code"] floating enable
@@ -99,11 +105,6 @@ bindsym $mod+minus split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen
-
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
