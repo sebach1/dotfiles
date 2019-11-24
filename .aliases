@@ -130,3 +130,4 @@ alias prikey="more ~/.ssh/id_rsa | xclip -selection clipboard | echo '=> Private
 
 alias pip=pip3
 alias python=python3
+alias fk=fuck
