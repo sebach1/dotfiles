@@ -276,22 +276,6 @@ install_golang() {
 	go get -u github.com/posener/complete/gocomplete
 
 
-	aliases=( sebach1/git-crud )
-	for project in "${aliases[@]}"; do
-		mkdir -p "~/projects/hub"
-
-		if [[ ! -d "~/projects/hub/${project}" ]]; then
-			(
-			# clone the repo
-			cd "~/projects/hub"
-			git clone "https://github.com/${project}.git"
-			# fix the remote path, since our gitconfig will make it git@
-			cd "~/projects/hub/${project}"
-			)
-		else
-			echo "found ${project} already in gopath"
-		fi
-	done
 
 	# do special things for k8s GOPATH
 	mkdir -p "${GOPATH}/src/k8s.io"
@@ -305,6 +289,27 @@ install_golang() {
 
 	# symlink weather binary for motd
 	sudo ln -snf "${GOPATH}/bin/weather" /usr/local/bin/weather
+}
+
+clone_projects_to() {
+	for project in $3; do
+		mkdir -p "${HOME}/projects/${1}"
+		projdir="${HOME}/projects/${1}/${project}"
+		if [[ ! -d $projdir ]]; then
+			git clone "${2}:${project}.git" $projdir
+		else
+			echo "${project} already in projects"
+		fi
+	done
+}
+
+clone_projects() {
+#	tk=(  )
+#	we=(  )
+	hub=( sebach1/git-crud )
+	clone_projects_to hub git@github.com $hub
+#	clone_projects_to(we, $we, git@gitlab.web-experto.com.ar)
+#	clone_projects_to(tk, $tk, git@gitlab.web-experto.com.ar)
 }
 
 # install graphics drivers
@@ -482,6 +487,7 @@ usage() {
 	echo -e "install.sh\\n\\tThis script installs my basic setup for a ubuntu distro\\n"
 	echo "Usage:"
 	echo "  base                                - setup sources & install base pkgs"
+	echo "  projects                            - setup projects folder"
 	echo "  graphics {intel, geforce, optimus}  - install graphics drivers"
 	echo "  wm                                  - install window manager/desktop pkgs"
 	echo "  dotfiles                            - get dotfiles"
@@ -512,10 +518,12 @@ main() {
 		check_is_sudo
 
 		install_graphics "$2"
-	elif [[ $cmd == "wm" ]]; then
+	elif [[ $cmd == "graphics" ]]; then
 		check_is_sudo
 
-		install_wmapps
+		install_graphics "$2"
+	elif [[ $cmd == "projects" ]]; then
+		clone_projects
 	elif [[ $cmd == "dotfiles" ]]; then
 		get_user
 		get_dotfiles
