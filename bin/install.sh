@@ -38,11 +38,7 @@ setup_sources_min() {
 	apt update || true
 	apt install -y \
 		apt-transport-https \
-		ca-certificates \
 		curl \
-		dirmngr \
-		gnupg2 \
-		lsb-release \
 		--no-install-recommends
 
 	# hack for latest git (don't judge)
@@ -76,12 +72,6 @@ setup_sources() {
 	deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse
 	EOF
 
-	# yubico
-	cat <<-EOF > /etc/apt/sources.list.d/yubico.list
-	deb http://ppa.launchpad.net/yubico/stable/ubuntu xenial main
-	deb-src http://ppa.launchpad.net/yubico/stable/ubuntu xenial main
-	EOF
-
 	# tlp: Advanced Linux Power Management
 	cat <<-EOF > /etc/apt/sources.list.d/tlp.list
 	# tlp: Advanced Linux Power Management
@@ -89,34 +79,11 @@ setup_sources() {
 	deb http://repo.linrunner.de/debian sid main
 	EOF
 
-	# Create an environment variable for the correct distribution
-	CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-	export CLOUD_SDK_REPO
-
-	# Add the Cloud SDK distribution URI as a package source
-	cat <<-EOF > /etc/apt/sources.list.d/google-cloud-sdk.list
-	deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main
-	EOF
-
-	# Import the Google Cloud Platform public key
-	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-
-	# Add the Google Chrome distribution URI as a package source
-	cat <<-EOF > /etc/apt/sources.list.d/google-chrome.list
-	deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
-	EOF
-
-	# Import the Google Chrome public key
-	curl https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-
-	# add the yubico ppa gpg key
-	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 3653E21064B19D134466702E43D5C49532CBA1A9
-
 	# add the tlp apt-repo gpg key
 	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 6B283E95745A6D903009F7CA641EED65CD4E8809
 }
 
-base_min() {
+base() {
 	apt update || true
 	apt -y upgrade
 
@@ -132,6 +99,7 @@ base_min() {
 		dnsutils \
 		file \
 		findutils \
+		fonts-firacode \
 		gcc \
 		git \
 		gnupg \
@@ -146,15 +114,18 @@ base_min() {
 		libc6-dev \
 		locales \
 		lsof \
+		lua5.2 \
 		make \
 		mount \
 		net-tools \
 		policykit-1 \
+		python3-pip \
+		python3-setuptools \
 		silversearcher-ag \
+		slack \
 		ssh \
 		strace \
 		sudo \
-		lua5.2 \
 		tar \
 		tree \
 		tzdata \
@@ -164,46 +135,37 @@ base_min() {
 		zip \
 		--no-install-recommends
 
-	# install vscode
+#	pip3 install thefuck
+
+	# Docker installation (https://github.com/docker/docker-install)
+	if ! [ -x "$(command -v docker)" ]; then
+		curl -fsSL https://get.docker.com -o ~/Downloads/get-docker.sh
+		sh ~/Downloads/get-docker.sh
+	fi
+
+	# bat
+	if ! [ -x "$(command -v bat)" ]; then
+		wget -O ~/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.11.0/bat_0.11.0_amd64.deb
+		dpkg -i ~/Downloads/bat.deb
+	fi
+
+	# fd
+	if ! [ -x "$(command -v fd)" ]; then
+		wget -O ~/Downloads/fd.deb https://github.com/sharkdp/fd/releases/download/v7.4.0/fd-musl_7.4.0_amd64.deb
+		dpkg -i ~/Downloads/fd.deb
+	fi
+
+	# vscode
 	if ! [ -x "$(command -v code)" ]; then
 		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB3E94ADBE1229CF
 		add-apt-repository -y "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 		apt install	-y code
 	fi
 
-	apt autoremove
-	apt autoclean
-	apt clean
-
 	install_scripts
-}
-
-# installs base packages
-# the utter bare minimal shit
-base() {
-	base_min;
 
 	apt update || true
 	apt -y upgrade
-
-	apt install -y \
-		apparmor \
-		bridge-utils \
-		cgroupfs-mount \
-		fwupd \
-		fwupdate \
-		gnupg-agent \
-		google-cloud-sdk \
-		iwd \
-		libapparmor-dev \
-		libimobiledevice6 \
-		libltdl-dev \
-		libpam-systemd \
-		libseccomp-dev \
-		pinentry-curses \
-		scdaemon \
-		systemd \
-		--no-install-recommends
 
 	setup_sudo
 
@@ -212,48 +174,7 @@ base() {
 	apt clean
 }
 
-# install and configure dropbear
-install_dropbear() {
-	apt update || true
-	apt -y upgrade
-
-	apt install -y \
-		dropbear-initramfs \
-		--no-install-recommends
-
-	apt autoremove
-	apt autoclean
-	apt clean
-
-	# change the default port and settings
-	echo 'DROPBEAR_OPTIONS="-p 4748 -s -j -k -I 60"' >> /etc/dropbear-initramfs/config
-
-	# update the authorized keys
-	cp "/home/${TARGET_USER}/.ssh/authorized_keys" /etc/dropbear-initramfs/authorized_keys
-	sed -i 's/ssh-/no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="\/bin\/cryptroot-unlock" ssh-/g' /etc/dropbear-initramfs/authorized_keys
-
-	echo
-	echo "Updated config in /etc/dropbear-initramfs/config:"
-	cat /etc/dropbear-initramfs/config
-	echo
-
-	echo "Updated authorized_keys in /etc/dropbear-initramfs/authorized_keys:"
-	cat /etc/dropbear-initramfs/authorized_keys
-	echo
-
-	echo "Dropbear has been installed and configured."
-	echo
-	echo "You will now want to update your initramfs:"
-	printf "\\tupdate-initramfs -u\\n"
-}
-
 # setup sudo for a user
-# because fuck typing that shit all the time
-# just have a decent password
-# and lock your computer when you aren't using it
-# if they have your password they can sudo anyways
-# so its pointless
-# i know what the fuck im doing ;)
 setup_sudo() {
 	# add user to sudoers
 	adduser "$TARGET_USER" sudo
@@ -263,9 +184,10 @@ setup_sudo() {
 	gpasswd -a "$TARGET_USER" systemd-journal
 	gpasswd -a "$TARGET_USER" systemd-network
 
-	# create docker group
-	sudo groupadd docker
-	sudo gpasswd -a "$TARGET_USER" docker
+	# setup downloads folder as tmpfs
+	# that way things are removed on reboot
+	mkdir -p "/home/$TARGET_USER/Downloads"
+	echo -e "\\n# tmpfs for downloads\\ntmpfs\\t/home/${TARGET_USER}/Downloads\\ttmpfs\\tnodev,nosuid,size=2G\\t0\\t0" >> /etc/fstab
 
 	# add go path to secure path
 	{ \
@@ -274,12 +196,9 @@ setup_sudo() {
 		echo -e "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL"; \
 		echo -e "${TARGET_USER} ALL=NOPASSWD: /sbin/ifconfig, /sbin/ifup, /sbin/ifdown, /sbin/ifquery"; \
 	} >> /etc/sudoers
-
-	# setup downloads folder as tmpfs
-	# that way things are removed on reboot
-	# i like things clean but you may not want this
-	mkdir -p "/home/$TARGET_USER/Downloads"
-	echo -e "\\n# tmpfs for downloads\\ntmpfs\\t/home/${TARGET_USER}/Downloads\\ttmpfs\\tnodev,nosuid,size=2G\\t0\\t0" >> /etc/fstab
+	# create docker group
+	sudo groupadd docker
+	sudo gpasswd -a "$TARGET_USER" docker
 }
 
 # install rust
@@ -348,7 +267,11 @@ install_golang() {
 	go get github.com/nsf/gocode
 	go get github.com/rogpeppe/godef
 
-	aliases=( genuinetools/contained.af genuinetools/binctr genuinetools/img docker/docker moby/buildkit opencontainers/runc )
+	# Autocompletion for go cli
+	go get -u github.com/posener/complete/gocomplete
+
+
+	aliases=( sebach1/git-crud )
 	for project in "${aliases[@]}"; do
 		owner=$(dirname "$project")
 		repo=$(basename "$project")
@@ -369,15 +292,6 @@ install_golang() {
 			)
 		else
 			echo "found ${project} already in gopath"
-		fi
-
-		# make sure we create the right git remotes
-		if [[ "$owner" != "jessfraz" ]] && [[ "$owner" != "genuinetools" ]]; then
-			(
-			cd "${GOPATH}/src/github.com/${project}"
-			git remote set-url --push origin no_push
-			git remote add jessfraz "https://github.com/jessfraz/${repo}.git"
-			)
 		fi
 	done
 
@@ -567,10 +481,9 @@ install_tools() {
 }
 
 usage() {
-	echo -e "install.sh\\n\\tThis script installs my basic setup for a debian laptop\\n"
+	echo -e "install.sh\\n\\tThis script installs my basic setup for a ubuntu distro\\n"
 	echo "Usage:"
 	echo "  base                                - setup sources & install base pkgs"
-	echo "  basemin                             - setup sources & install base min pkgs"
 	echo "  graphics {intel, geforce, optimus}  - install graphics drivers"
 	echo "  wm                                  - install window manager/desktop pkgs"
 	echo "  dotfiles                            - get dotfiles"
@@ -579,7 +492,6 @@ usage() {
 	echo "  rust                                - install rust"
 	echo "  scripts                             - install scripts"
 	echo "  tools                               - install golang, rust, and scripts"
-	echo "  dropbear                            - install and configure dropbear initramfs"
 }
 
 main() {
@@ -598,14 +510,6 @@ main() {
 		setup_sources
 
 		base
-	elif [[ $cmd == "basemin" ]]; then
-		check_is_sudo
-		get_user
-
-		# setup /etc/apt/sources.list
-		setup_sources_min
-
-		base_min
 	elif [[ $cmd == "graphics" ]]; then
 		check_is_sudo
 
@@ -627,12 +531,6 @@ main() {
 		install_scripts
 	elif [[ $cmd == "tools" ]]; then
 		install_tools
-	elif [[ $cmd == "dropbear" ]]; then
-		check_is_sudo
-
-		get_user
-
-		install_dropbear
 	else
 		usage
 	fi
