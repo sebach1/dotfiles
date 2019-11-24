@@ -6,7 +6,7 @@ export DOCKER_REPO_PREFIX=jess
 #
 # Helper Functions
 #
-dcleanup(){
+dclean(){
 	local containers
 	mapfile -t containers < <(docker ps -aq 2>/dev/null)
 	docker rm "${containers[@]}" 2>/dev/null
@@ -17,7 +17,7 @@ dcleanup(){
 	mapfile -t images < <(docker images --filter dangling=true -q 2>/dev/null)
 	docker rmi "${images[@]}" 2>/dev/null
 }
-del_stopped(){
+drmstop(){
 	local name=$1
 	local state
 	state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
@@ -26,10 +26,12 @@ del_stopped(){
 		docker rm "$name"
 	fi
 }
-rmctr(){
+
+drmall(){
 	# shellcheck disable=SC2068
 	docker rm -f $@ 2>/dev/null || true
 }
+
 relies_on(){
 	for container in "$@"; do
 		local state
@@ -109,7 +111,7 @@ pandoc(){
 		${DOCKER_REPO_PREFIX}/pandoc "${args}" "${rfile}"
 }
 
-skype(){
+dskype(){
 	del_stopped skype
 	relies_on pulseaudio
 
@@ -126,7 +128,7 @@ skype(){
 		--name skype \
 		${DOCKER_REPO_PREFIX}/skype
 }
-slack(){
+dslack(){
 	del_stopped slack
 
 	docker run -d \
@@ -143,7 +145,7 @@ slack(){
 		--name slack \
 		${DOCKER_REPO_PREFIX}/slack "$@"
 }
-spotify(){
+dspotify(){
 	del_stopped spotify
 
 	docker run -d \
