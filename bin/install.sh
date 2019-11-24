@@ -53,10 +53,10 @@ setup_sources_min() {
 	EOF
 
 	# add the git-core ppa gpg key
-	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
+#	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
 
 	# add the iovisor/bcc-tools gpg key
-	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 648A4A16A23015EEF4A66B8E4052245BD4284CDD
+#	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 648A4A16A23015EEF4A66B8E4052245BD4284CDD
 
 	# turn off translations, speed up apt update
 	mkdir -p /etc/apt/apt.conf.d
@@ -78,9 +78,6 @@ setup_sources() {
 	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
 	deb http://repo.linrunner.de/debian sid main
 	EOF
-
-	# add the tlp apt-repo gpg key
-	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 6B283E95745A6D903009F7CA641EED65CD4E8809
 }
 
 base() {
@@ -101,6 +98,7 @@ base() {
 		findutils \
 		fonts-firacode \
 		gcc \
+		gconf2 \
 		git \
 		gnupg \
 		gnupg2 \
@@ -111,6 +109,8 @@ base() {
 		iptables \
 		jq \
 		less \
+		libappindicator1 \
+		libindicator7 \
 		libc6-dev \
 		locales \
 		lsof \
@@ -122,7 +122,6 @@ base() {
 		python3-pip \
 		python3-setuptools \
 		silversearcher-ag \
-		slack \
 		ssh \
 		strace \
 		sudo \
@@ -141,6 +140,12 @@ base() {
 	if ! [ -x "$(command -v docker)" ]; then
 		curl -fsSL https://get.docker.com -o ~/Downloads/get-docker.sh
 		sh ~/Downloads/get-docker.sh
+	fi	# Docker installation (https://github.com/docker/docker-install)
+
+	# Slack installation
+	if ! [ -x "$(command -v slack)" ]; then
+		wget -O ~/Downloads/slack.deb https://downloads.slack-edge.com/linux_releases/slack-desktop-4.1.2-amd64.deb
+		dpkg -i ~/Downloads/slack.deb
 	fi
 
 	# bat
@@ -273,22 +278,15 @@ install_golang() {
 
 	aliases=( sebach1/git-crud )
 	for project in "${aliases[@]}"; do
-		owner=$(dirname "$project")
-		repo=$(basename "$project")
-		if [[ -d "${HOME}/${repo}" ]]; then
-			rm -rf "${HOME:?}/${repo}"
-		fi
+		mkdir -p "~/projects/hub"
 
-		mkdir -p "${GOPATH}/src/github.com/${owner}"
-
-		if [[ ! -d "${GOPATH}/src/github.com/${project}" ]]; then
+		if [[ ! -d "~/projects/hub/${project}" ]]; then
 			(
 			# clone the repo
-			cd "${GOPATH}/src/github.com/${owner}"
+			cd "~/projects/hub"
 			git clone "https://github.com/${project}.git"
 			# fix the remote path, since our gitconfig will make it git@
-			cd "${GOPATH}/src/github.com/${project}"
-			git remote set-url origin "https://github.com/${project}.git"
+			cd "~/projects/hub/${project}"
 			)
 		else
 			echo "found ${project} already in gopath"
