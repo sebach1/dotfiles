@@ -172,3 +172,5 @@ unset file
 eval "$(lua ~/.z.lua/z.lua --init bash enhanced once)"
 export _ZL_ECHO=1
 
+
+complete -C $GOPATH/bin/gocomplete go
