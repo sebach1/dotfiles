@@ -1,4 +1,4 @@
-GtkPaned::handle-size             = 6
+GtkPaned::handle-size             = 3
 GimpDockWindow::default-height    = 300
 GimpDock::font-scale              = 0.8333
 GimpMenuDock::minimal-width       = 200
