@@ -218,3 +218,10 @@ exec --no-startup-id feh --bg-fill ${HOME}/Pictures/wp.png
 # run the merge for good colors
 exec xrdb -merge $HOME/.Xresources
 exec xrdb -merge $HOME/.Xdefaults
+
+# Startup apps
+exec --no-startup-id i3-msg 'workspace 3; exec /usr/bin/code'
+exec --no-startup-id i3-msg 'workspace 10; exec /usr/bin/spotify'
+exec --no-startup-id i3-msg 'workspace 1; exec /usr/bin/google-chrome-stable --force-device-scale-factor 0.85'
+exec --no-startup-id i3-msg 'workspace 2; exec /usr/bin/urxvt'
+exec --no-startup-id i3-msg 'workspace 4; exec /usr/bin/slack'

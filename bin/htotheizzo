@@ -95,29 +95,6 @@ update_docker() {
 	systemctl start docker || true
 }
 
-update_containerd() {
-	echo
-	echo "Updating containerd..."
-	echo
-
-	local tmp_tar=/tmp/containerd.tar.gz
-	local containerd_version
-	containerd_version=$(curl -sSL "https://api.github.com/repos/containerd/containerd/releases" | jq --raw-output .[0].tag_name)
-	containerd_version=${containerd_version#v}
-	local binary_uri="https://github.com/containerd/containerd/releases/download/v${containerd_version}/containerd-${containerd_version}.linux-amd64.tar.gz"
-	(
-	set -x
-	curl -fSL "$binary_uri" -o "$tmp_tar"
-	tar -C /usr/local/bin --strip-components 1 -xzvf "$tmp_tar"
-	rm "$tmp_tar"
-	containerd -v
-	)
-
-	# enable and start containerd
-	systemctl daemon-reload
-	systemctl enable containerd
-	systemctl start containerd
-}
 
 update_runc() {
 	echo
@@ -207,7 +184,6 @@ update() {
 		get_user;
 		update_apt;
 		update_docker;
-		update_containerd;
 		update_runc;
 		update_kubectl;
 		update_rust;
