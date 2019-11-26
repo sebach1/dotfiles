@@ -114,7 +114,7 @@ URxvt.keysym.M-Right:       \033[1;5C
 
 
 !! BACKGROUND
-URxvt.background: [80]#06060a
+URxvt.background:                    [80]#06060a
 URxvt*inheritPixmap:                  true
 URxvt*transparent:                    true
 URxvt*shading:                        10

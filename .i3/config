@@ -14,6 +14,9 @@ set $lockcmd i3lock
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 font pango:Monospace 8
 
+# Auto-select last selected wdw if the desired wdw is the same as the focused
+workspace_auto_back_and_forth yes
+
 # Tiles mode (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
