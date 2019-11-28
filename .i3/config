@@ -178,24 +178,24 @@ bindsym $mod+Shift+e exit
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
+# These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
+# Pressing left will shrink the window’s width.
+# Pressing right will grow the window’s width.
+# Pressing up will shrink the window’s height.
+# Pressing down will grow the window’s height.
+    bindsym j resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
         bindsym semicolon resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
+# same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
         bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
+# back to normal: Enter or Escape
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
@@ -205,8 +205,8 @@ bindsym $mod+r mode "resize"
 # i3status bar config
 bar {
     position top
-	font pango:monospace 8
-	status_command $barcmd --config ~/.i3/status.conf
+        font pango:monospace 8
+        status_command $barcmd --config ~/.i3/status.conf
 }
 
 # auto run commands
@@ -223,8 +223,12 @@ exec xrdb -merge $HOME/.Xresources
 exec xrdb -merge $HOME/.Xdefaults
 
 # Startup apps
-exec --no-startup-id i3-msg 'workspace 3; exec /usr/bin/code'
-exec --no-startup-id i3-msg 'workspace 10; exec /usr/bin/spotify'
-exec --no-startup-id i3-msg 'workspace 1; exec /usr/bin/google-chrome-stable --force-device-scale-factor 0.85'
-exec --no-startup-id i3-msg 'workspace 2; exec /usr/bin/urxvt'
-exec --no-startup-id i3-msg 'workspace 4; exec /usr/bin/slack'
+exec --no-startup-id i3-msg 'exec clipit'
+exec --no-startup-id i3-msg 'exec $HOME/.init.sh'
+
+assign [class="Code"] 3
+assign [class="Spotify"] 10
+assign [class="Google-chrome"] 1
+assign [class="Slack"] 4
+assign [title="urxvt"] 2
+
