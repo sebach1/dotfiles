@@ -525,6 +525,8 @@ main() {
 		install_graphics "$2"
 	elif [[ $cmd == "projects" ]]; then
 		clone_projects
+	elif [[ $cmd == "wm" ]]; then
+		install_wmapps
 	elif [[ $cmd == "dotfiles" ]]; then
 		get_user
 		get_dotfiles
