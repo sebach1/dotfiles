@@ -91,6 +91,7 @@ base() {
 		bc \
 		bzip2 \
 		ca-certificates \
+		clipit \
 		coreutils \
 		curl \
 		dnsutils \
