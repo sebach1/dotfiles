@@ -41,16 +41,7 @@ setup_sources_min() {
 		curl \
 		--no-install-recommends
 
-	# hack for latest git (don't judge)
-	cat <<-EOF > /etc/apt/sources.list.d/git-core.list
-	deb http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
-	deb-src http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
-	EOF
 
-	# iovisor/bcc-tools
-	cat <<-EOF > /etc/apt/sources.list.d/iovisor.list
-	deb https://repo.iovisor.org/apt/xenial xenial main
-	EOF
 
 	# add the git-core ppa gpg key
 #	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
@@ -70,13 +61,6 @@ setup_sources() {
 
 	cat <<-EOF > /etc/apt/sources.list
 	deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse
-	EOF
-
-	# tlp: Advanced Linux Power Management
-	cat <<-EOF > /etc/apt/sources.list.d/tlp.list
-	# tlp: Advanced Linux Power Management
-	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
-	deb http://repo.linrunner.de/debian sid main
 	EOF
 }
 
@@ -138,18 +122,6 @@ base() {
 #	pip3 install thefuck
 
 	# Docker installation (https://github.com/docker/docker-install)
-	if ! [ -x "$(command -v docker)" ]; then
-		curl -fsSL https://get.docker.com -o ~/Downloads/get-docker.sh
-		sh ~/Downloads/get-docker.sh
-	fi	# Docker installation (https://github.com/docker/docker-install)
-
-	# Slack installation
-	if ! [ -x "$(command -v slack)" ]; then
-		wget -O ~/Downloads/slack.deb https://downloads.slack-edge.com/linux_releases/slack-desktop-4.1.2-amd64.deb
-		dpkg -i ~/Downloads/slack.deb
-	fi
-
-	# bat
 	if ! [ -x "$(command -v bat)" ]; then
 		wget -O ~/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.11.0/bat_0.11.0_amd64.deb
 		dpkg -i ~/Downloads/bat.deb
@@ -178,6 +150,7 @@ base() {
 	apt autoremove
 	apt autoclean
 	apt clean
+
 }
 
 # setup sudo for a user
@@ -526,6 +499,8 @@ main() {
 	elif [[ $cmd == "projects" ]]; then
 		clone_projects
 	elif [[ $cmd == "wm" ]]; then
+		check_is_sudo
+
 		install_wmapps
 	elif [[ $cmd == "dotfiles" ]]; then
 		get_user
