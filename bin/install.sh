@@ -114,7 +114,7 @@ base() {
 		tree \
 		tzdata \
 		unzip \
-		vim \
+		vim-gnome \
 		xz-utils \
 		zip \
 		--no-install-recommends
