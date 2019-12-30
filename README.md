@@ -1,5 +1,5 @@
 # dotfiles
-
+> Disclaimer: the project isn't serious. It contains experiments with git hists and weird things. Use it at your own risk.
 
 **Table of Contents**
 
@@ -55,66 +55,66 @@ Explanation:
 
 ### Bash
 
-speedtest
-weather (genuinetools)
-udict (genuinetools)
-tdash
-afk
-screen-backlight (#)
-slackpm (#)
-update-firmware (#)
-mkd (*)
-calc (*)
-tmpd (*)
-fsz (*)
-dataurl (*)
-gitio (*)
-server (*)
-json (*)
-mwiki (*)
-escape (*)
-openimg*)
-gogo (*)
-golistdeps (*)
-govendorcheck (*)
+ - speedtest
+ - weather (genuinetools)
+ - udict (genuinetools)
+ - tdash
+ - afk
+ - screen-backlight (#)
+ - slackpm (#)
+ - update-firmware (#)
+ - mkd (*)
+ - calc (*)
+ - tmpd (*)
+ - fsz (*)
+ - dataurl (*)
+ - gitio (*)
+ - server (*)
+ - json (*)
+ - mwiki (*)
+ - escape (*)
+ - openimg*)
+ - gogo (*)
+ - golistdeps (*)
+ - govendorcheck (*)
 
 
 ### Git
 
-check-go-repos (#)
-pepper
-icdiff
+ - check-go-repos (#)
+ - pepper
+ - icdiff
 
 ### Go IDE
 
-goimports
-gorename
-golint
-guru
-gopls
-cover
-staticcheck
-golangci-lint
-gotags
-gocode
-godef
+ - goimports
+ - gorename
+ - golint
+ - guru
+ - gopls
+ - cover
+ - staticcheck
+ - golangci-lint
+ - gotags
+ - gocode
+ - godef
 
 ### Infra
 
-getcertnames(*)
-amicontained
-certok (genuinetools)
-reg (genuinetools)
-browser-exec (#) 
-cleanup-non-running-images (#) 
-del_stopped (+)
-rmctr (+)
-relies_on (+)
+- getcertnames(*)
+- amicontained
+- certok (genuinetools)
+- reg (genuinetools)
+- browser-exec (#) 
+- cleanup-non-running-images (#) 
+- del_stopped (+)
+- rmctr (+)
+- relies_on (+)
 
 ### Other
 
-hmrandr (*)
-ofirandr (*)
-gmailfilters
-sembump
-htotheizzg
+- hmrandr (*)
+- ofirandr (*)
+- gmailfilters
+- sembump
+- htotheizzg
