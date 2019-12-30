@@ -122,6 +122,11 @@ base() {
 #	pip3 install thefuck
 
 	# Docker installation (https://github.com/docker/docker-install)
+	if ! [ -x "$(command -v docker)" ]; then
+		curl -fsSL https://get.docker.com -o ~/Downloads/docker.sh
+		bash ~/Downloads/docker.sh
+	fi
+
 	if ! [ -x "$(command -v bat)" ]; then
 		wget -O ~/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.11.0/bat_0.11.0_amd64.deb
 		dpkg -i ~/Downloads/bat.deb
