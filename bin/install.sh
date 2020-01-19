@@ -497,10 +497,6 @@ main() {
 		check_is_sudo
 
 		install_graphics "$2"
-	elif [[ $cmd == "graphics" ]]; then
-		check_is_sudo
-
-		install_graphics "$2"
 	elif [[ $cmd == "projects" ]]; then
 		clone_projects
 	elif [[ $cmd == "wm" ]]; then
