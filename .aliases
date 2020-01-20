@@ -127,7 +127,9 @@ alias pubkey="more ~/.ssh/id_rsa.pub | xclip -selection clipboard | echo '=> Pub
 
 # Pipe my private key to my clipboard.
 alias prikey="more ~/.ssh/id_rsa | xclip -selection clipboard | echo '=> Private key copied to pasteboard.'"
-
+alias bcr='PROF=bcr we'
 alias pip=pip3
 alias python=python3
 alias fk=fuck
+alias update_vscode="wget https://vscode-update.azurewebsites.net/latest/linux-deb-x64/stable -O /tmp/code_latest_amd64.deb
+sudo dpkg -i /tmp/code_latest_amd64.deb"
