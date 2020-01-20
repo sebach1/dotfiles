@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ ! -x $(command -v code) ]
+then
+	if [ ! -x $(command -v code-insiders) ]
+	then
+		echo Go and install something before updating
+		exit 1
+	fi
+	bin=code-insiders
+	url=https://go.microsoft.com/fwlink/?LinkID=760865
+else
+	bin=code
+	url=https://go.microsoft.com/fwlink/?LinkID=760868
+fi
+
+installed_version=`dpkg -s $bin | grep ^Version | awk '{print $2}'`
+tmp_folder=./tmp/
+echo "Updating $bin from $installed_version..."
+filename=`wget -nv --content-disposition $url -P $tmp_folder 2>&1 | cut -d\" -f2`
+
+downloaded_version=`dpkg-deb -f $filename Version`
+if $(dpkg --compare-versions "$downloaded_version" "gt" "$installed_version")
+then
+	sudo dpkg -i $filename
+fi
+echo "Updated $bin to $downloaded_version :)"
+sudo rm -rf $tmp_folder
