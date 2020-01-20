@@ -23,7 +23,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # Hotkeys
-bindsym $mod+F1 exec chromium-browser --force-device-scale-factor=0.85
+bindsym $mod+F1 exec google-chrome-unstable --force-device-scale-factor=0.85
 bindsym $mod+F3 exec spotify
 bindsym $mod+F4 exec slack
 bindsym $mod+m exec $term -e alsamixer
@@ -59,15 +59,18 @@ bindsym $mod+F2 exec $menu
 bindsym $mod+Shift+q kill
 
 # borders
+for_window [class="^.*"] border pixel 0
 for_window [title="spotify"] border none
 for_window [title="urxvt"] border 1pixel
+for_window [instance="google-chrome-unstable"] border 1pixel
+
+bindsym $mod+Shift+f split v; focus parent; fullscreen toggle; focus child
 
 # skype, steam, wine: float Gimp
 # for_window [class="Code"] floating enable
 # for_window [class="Firefox"] floating enable
 # for_window [class="chromium-browser"] floating enable
 # for_window [class="google-chrome"] floating enable
-# for_window [class="Google-chrome"] floating enable
 # for_window [class="Skype"] floating enable
 # for_window [class="Slack"] floating enable
 # for_window [class="Steam"] floating enable
