@@ -1,7 +1,6 @@
 # i3 config file (v4)
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
-
 set $mod Mod1
 set $term urxvt
 set $menu i3-dmenu-desktop
@@ -23,7 +22,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # Hotkeys
-bindsym $mod+F1 exec google-chrome-unstable --force-device-scale-factor=0.85
+bindsym $mod+F1 exec google-chrome --force-device-scale-factor=0.85
 bindsym $mod+F3 exec spotify
 bindsym $mod+F4 exec slack
 bindsym $mod+m exec $term -e alsamixer
@@ -59,10 +58,7 @@ bindsym $mod+F2 exec $menu
 bindsym $mod+Shift+q kill
 
 # borders
-for_window [class="^.*"] border pixel 0
-for_window [title="spotify"] border none
-for_window [title="urxvt"] border 1pixel
-for_window [instance="google-chrome-unstable"] border 1pixel
+for_window [class="^.*"] border none
 
 bindsym $mod+Shift+f split v; focus parent; fullscreen toggle; focus child
 
