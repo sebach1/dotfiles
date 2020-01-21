@@ -81,12 +81,6 @@ nginx_config(){
 # Container Aliases
 #
 
-alias notify-send=notify_send
-notify_send(){
-	relies_on notify_osd
-	local args=${*:2}
-	docker exec -i notify_osd notify-send "$1" "${args}"
-}
 now(){
 	docker run -it --rm \
 		-v "${HOME}/.now:/root/.now" \
