@@ -16,7 +16,7 @@ Session.vim
 .uuid
 
 .extra
-.gitconfig
+#.gitconfig
 .gnupg
 !.gnupg/gpg*.conf
 .i3/logfile
