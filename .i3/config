@@ -3,7 +3,8 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 set $mod Mod1
 set $term urxvt
-set $menu i3-dmenu-desktop
+set $menu dmenu_run
+set $clear_menu i3-dmenu-desktop
 set $barcmd i3status
 set $lockcmd i3lock
 
@@ -53,6 +54,7 @@ bindsym $mod+Return exec $term
 
 # start dmenu
 bindsym $mod+F2 exec $menu
+bindsym $mod+Shift+F2 exec $clear_menu
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -204,14 +206,13 @@ bindsym $mod+r mode "resize"
 # i3status bar config
 bar {
     position top
-        font pango:monospace 8
-        status_command $barcmd --config ~/.i3/status.conf
+    font pango:monospace 8
+    status_command $barcmd --config ~/.i3/status.conf
 }
 
 # auto run commands
 # set background
 # use the same background as slim (login manager)
-# this file is an alias to something in /home/jessie/Pictures
 exec --no-startup-id feh --bg-fill ${HOME}/Pictures/wp.png
 
 # Sway backgroud
