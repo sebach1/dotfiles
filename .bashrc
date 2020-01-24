@@ -175,3 +175,5 @@ export _ZL_ECHO=1
 complete -C $GOPATH/bin/gocomplete go
 
  source /home/sebach1/.we-autocompletion.sh
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
