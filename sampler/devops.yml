@@ -1,0 +1,30 @@
+sparklines:
+  - title: Local CPU usage
+    position: [[40, 24], [40, 17]]
+    rate-ms: 200
+    scale: 0
+    sample: ps -A -o %cpu | awk '{s+=$1} END {print s}'
+  - title: Local Disk usage
+    position: [[20, 0], [20, 13]]
+    rate-ms: 700
+    scale: 0
+    sample: df -h | grep dev | grep da | head -n 1 | awk '{s+=$5} END {print s}'
+  - title: Local Mem free (w/swap)
+    position: [[40, 0], [40, 13]]
+    rate-ms: 200
+    scale: 0
+    init: ssh ringo
+    sample: free -h -t | grep Total | awk '{t=substr($4, 1, length($4)-1)} END {print
+        t}'
+  - title: Remote CPU usage
+    position: [[0, 24], [40, 17]]
+    rate-ms: 200
+    scale: 0
+    init: ssh ringo
+    sample: ps -A -o %cpu | awk '{s+=$1} END {print s}'
+  - title: Remote Disk usage
+    position: [[0, 0], [20, 13]]
+    rate-ms: 700
+    scale: 0
+    init: ssh ringo
+    sample: df -h | grep dev | grep da | head -n 1 | awk '{s+=$5} END {print s}'

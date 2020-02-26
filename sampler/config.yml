@@ -1,0 +1,17 @@
+runcharts:
+  - title: Response time (sec)
+    position: [[0, 6], [37, 20]]
+    rate-ms: 200
+    triggers:
+      - title: Latency threshold exceeded
+        condition: echo "$prev < 0.3 && $cur > 0.3" |bc -l
+        actions:
+            terminal-bell: true
+            sound: true
+            visual: true
+            script: 'say alert: ${label} latency exceeded ${cur} second'
+    items:
+      - label: Talkiu
+        sample: curl -o /dev/null -s -w '%{time_total}'  https://app.talkiu.com
+      - label: Solei
+        sample: curl -o /dev/null -s -w '%{time_total}'  https://redsolei.com.ar
