@@ -6,6 +6,13 @@ export DOCKER_REPO_PREFIX=jess
 #
 # Helper Functions
 #
+dps(){
+	docker ps -a
+}
+
+devrun(){
+	docker-compose -f development.yml run --rm
+}
 dclean(){
 	local containers
 	mapfile -t containers < <(docker ps -aq 2>/dev/null)
@@ -25,6 +32,26 @@ drmstop(){
 	if [[ "$state" == "false" ]]; then
 		docker rm "$name"
 	fi
+}
+
+dup(){
+	local filename=${1:-docker-compose.yml}
+	docker-compose -f $filename up
+}
+
+dupd(){
+	local filename=${1}
+	if [[ "$filename" == "" ]]  # to take override instead of default docker-compose
+	then
+		docker-compose up -d
+	else
+		docker-compose -f $filename up -d
+	fi
+}
+
+drmf(){
+	local name=$1
+	docker rm -f $(docker ps -aq --filter=name=$name)
 }
 
 drmall(){
@@ -139,6 +166,8 @@ dslack(){
 		--name slack \
 		${DOCKER_REPO_PREFIX}/slack "$@"
 }
+
+
 dspotify(){
 	del_stopped spotify
 

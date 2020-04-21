@@ -5,6 +5,8 @@ URxvt.termName: rxvt-unicode-256color
 *utf8:                  1
 *saveLines:             999999
 
+URxvt*loginShell: true
+
 !-- Xft settings -- !
 Xft.dpi:        144
 Xft.rgba:       rgb
