@@ -1,0 +1,228 @@
+#!/bin/bash
+
+#! PROJECTS CONFIG LOADER - dont touch it, bitch. Keep moving.
+#
+#
+projects_dir="$HOME/.projects"
+curr_file="$projects_dir/.curr"
+
+if [ ! -d $projects_dir ]; then
+    mkdir ${projects_dir}
+fi
+
+if [ ! -f $curr_file ]; then
+    touch $curr_file
+fi
+
+function curr() {
+    cat $curr_file
+}
+
+
+function set_curr() {
+    if [ ! -f "${projects_dir}/${@}" ]; then
+        echo "project named \""$@"\" not found"
+        return
+    fi
+    rm $curr_file || echo "no previous curr set up"
+    echo "$@" >$curr_file
+    echo "current project context set up to $(curr)"
+
+    load_curr
+}
+
+function load_curr() {
+    curr_project="${projects_dir}/$(curr)"
+    source $curr_project
+    source ${PROJECT_DIR}/.env 2>/dev/null
+}
+
+load_curr 2>/dev/null
+
+function confirm() {
+    # call with a prompt string or use a default
+
+    read -r -p "Are you sure? [y/N]: " response
+    case "$response" in
+    [yY][eE][sS] | [yY])
+        return 1
+        ;;
+    *)
+        return 0
+        ;;
+    esac
+}
+
+function add_project() {
+    project_name="$@"
+    echo "you are going to add the project named \"$project_name\" as one linked to $(pwd)"
+    confirmed=$(confirm)
+    echo $confirmed
+    if [ $confirmed ]; then
+        return
+    fi
+    read -r -p "main service name (e.g: web): " service_name
+
+    project_file="${projects_dir}/${project_name}"
+    echo "PROJECT_DIR=$(pwd)" >>$project_file
+    echo "PROJECT_SERVICE_NAME=${service_name}" >>$project_file
+    echo "saved project named $project_name with service named $service_name"
+
+    set_curr $project_name
+    load_curr
+}
+
+function dcd() {
+    cd ${PROJECT_DIR}
+}
+
+
+function on_project() {
+    (dcd && "$@")
+}
+
+
+function compose_project_name() {
+    echo ${COMPOSE_PROJECT_NAME-$PROJECT_DIR}
+}
+
+#! DOCKER AND COMPOSE ENTRYPOINTS
+#
+#
+function entrypoint() {
+    on_project docker-compose "$@"
+}
+
+function up() {
+    entrypoint up "$@"
+}
+
+function build() {
+    entrypoint build "$@"
+}
+
+function down() {
+    entrypoint down "$@"
+}
+
+function dps() {
+    entrypoint ps "$@"
+}
+
+function dps_svc() {
+    dps "$@" $PROJECT_SERVICE_NAME
+}
+
+function exec() {
+    entrypoint exec $PROJECT_SERVICE_NAME "$@"
+}
+
+function run_rm() {
+    entrypoint run --rm $PROJECT_SERVICE_NAME "$@"
+}
+
+function run() {
+    if [ "$(dps_svc -q)" = "" ]; then
+        run_rm "$@"
+    else
+        exec "$@"
+    fi
+}
+
+function update(){
+	curl "https://gitlab.web-experto.com.ar/sebach1/dutils/raw/master/_" > "$HOME/.dutils"
+}
+
+function multiline() {
+    run sh -c "$@"
+}
+
+
+#! RAILS
+#
+#
+##? BUNDLE
+#
+function dbundle() {
+    run bundle "$@"
+}
+
+function bundle_install() {
+    dbundle install --jobs=20 --retry=2 --quiet
+    build ${PROJECT_SERVICE_NAME}
+}
+
+function bundle_exec() {
+    dbundle exec "$@"
+}
+
+function bundle_add() {
+    dbundle add "$@" --skip-install
+    bundle_install
+}
+
+function bundle_update() {
+    dbundle update --source "$@"
+    build ${PROJECT_SERVICE_NAME}
+}
+
+##? UTILS
+#
+function migrate() {
+    multiline 'bundle exec rails db:migrate || bundle exec rails db:migrate:reset'
+}
+
+
+function help(){
+	cat $projects_dir/README.md
+}
+
+
+#! NPM
+#
+#
+function dnpm() {
+    run npm "$@"
+}
+
+function npm_run() {
+    dnpm run "$@"
+}
+
+function npm_update() {
+    dnpm update "$@"
+    build ${PROJECT_SERVICE_NAME}
+}
+
+function npm_install() {
+    dnpm install "$@"
+    build ${PROJECT_SERVICE_NAME}
+}
+
+alias npmi=npm_install
+
+#! SETUP
+#
+#
+function setup() {
+    if [ "$(compose_project_name)" = "cereales" ]; then
+        setup_cereales "$@"
+    fi
+}
+
+function setup_cereales() {
+    down
+    if [ "$PROJECT_SERVICE_NAME" = "backend" ]; then
+        setup_cereales_backend "$@"
+    elif [ "$PROJECT_SERVICE_NAME" = "frontend" ]; then
+        setup_cereales_frontend "$@"
+    fi
+}
+
+function setup_cereales_backend() {
+    bundle_exec rails db:setup
+}
+
+function setup_cereales_frontend() {
+    echo "not implemented"
+}

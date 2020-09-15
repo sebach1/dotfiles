@@ -35,7 +35,7 @@ drmstop(){
 }
 
 dup(){
-	local filename=${1:-docker-compose.yml}
+	local filename=${1:-docker-compose.yml -f docker-compose.override.yml}
 	docker-compose -f $filename up
 }
 
@@ -47,6 +47,15 @@ dupd(){
 	else
 		docker-compose -f $filename up -d
 	fi
+}
+dbundle(){
+	local name=$1
+	docker exec -it ${name}_web_1 bundle exec rails c
+}
+
+dbash(){
+	local name=$1
+	docker exec -it ${name}_web_1 bash
 }
 
 drmf(){

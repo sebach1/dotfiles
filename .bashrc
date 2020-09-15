@@ -172,9 +172,13 @@ unset file
 eval "$(lua ~/.z.lua/z.lua --init bash enhanced once)"
 export _ZL_ECHO=1
 
-complete -C $GOPATH/bin/gocomplete go
-
 source /home/sebach1/.we-autocompletion.sh
 source /home/sebach1/.buffalo-completion.sh
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+
+complete -C $GOPATH/bin/gocomplete go
+
+source $HOME/.dutils
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
