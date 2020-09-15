@@ -172,8 +172,7 @@ unset file
 eval "$(lua ~/.z.lua/z.lua --init bash enhanced once)"
 export _ZL_ECHO=1
 
-source /home/sebach1/.we-autocompletion.sh
-source /home/sebach1/.buffalo-completion.sh
+source $HOME/.we-autocompletion.sh
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 

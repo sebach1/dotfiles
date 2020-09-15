@@ -35,19 +35,12 @@ check_is_sudo() {
 
 
 setup_sources_min() {
-	apt update || true
+	apt update
 	apt install -y \
 		apt-transport-https \
 		curl \
 		--no-install-recommends
 
-
-
-	# add the git-core ppa gpg key
-#	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
-
-	# add the iovisor/bcc-tools gpg key
-#	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 648A4A16A23015EEF4A66B8E4052245BD4284CDD
 
 	# turn off translations, speed up apt update
 	mkdir -p /etc/apt/apt.conf.d
@@ -65,57 +58,36 @@ setup_sources() {
 }
 
 base() {
-	apt update || true
+	apt update
 	apt -y upgrade
 
 	apt install -y \
-		adduser \
 		automake \
 		bash-completion \
-		bc \
-		bzip2 \
 		ca-certificates \
 		clipit \
 		coreutils \
 		curl \
-		dnsutils \
-		file \
-		findutils \
 		fonts-firacode \
 		gcc \
-		gconf2 \
 		git \
-		gnupg \
-		gnupg2 \
 		grep \
 		gzip \
-		hostname \
-		indent \
 		iptables \
 		jq \
 		less \
-		libappindicator1 \
-		libindicator7 \
-		libc6-dev \
-		locales \
-		lsof \
 		lua5.2 \
 		make \
-		mount \
-		net-tools \
-		policykit-1 \
 		python3-pip \
 		python3-setuptools \
 		silversearcher-ag \
 		ssh \
-		strace \
 		sudo \
 		tar \
 		tree \
 		tzdata \
 		unzip \
 		vim-gnome \
-		xz-utils \
 		zip \
 		--no-install-recommends
 
@@ -130,6 +102,10 @@ base() {
 	if ! [ -x "$(command -v bat)" ]; then
 		wget -O ~/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.11.0/bat_0.11.0_amd64.deb
 		dpkg -i ~/Downloads/bat.deb
+	fi
+
+	if ! [ -x "$(command -v we)" ]; then
+		curl https://gitlab.web-experto.com.ar/sebach1/we/raw/master/install.sh | sudo bash
 	fi
 
 	# fd
@@ -147,7 +123,7 @@ base() {
 
 	install_scripts
 
-	apt update || true
+	apt update
 	apt -y upgrade
 
 	setup_sudo
@@ -289,39 +265,6 @@ clone_projects() {
 	clone_projects_to hub git@github.com $hub
 #	clone_projects_to(we, $we, git@gitlab.web-experto.com.ar)
 #	clone_projects_to(tk, $tk, git@gitlab.web-experto.com.ar)
-}
-
-# install graphics drivers
-install_graphics() {
-	local system=$1
-
-	if [[ -z "$system" ]]; then
-		echo "You need to specify whether it's intel, geforce or optimus"
-		exit 1
-	fi
-
-	local pkgs=( xorg xserver-xorg xserver-xorg-input-libinput xserver-xorg-input-synaptics )
-
-	case $system in
-		"intel")
-			pkgs+=( xserver-xorg-video-intel )
-			;;
-		"geforce")
-			pkgs+=( nvidia-driver )
-			;;
-		"optimus")
-			pkgs+=( nvidia-kernel-dkms bumblebee-nvidia primus )
-			;;
-		*)
-			echo "You need to specify whether it's intel, geforce or optimus"
-			exit 1
-			;;
-	esac
-
-	apt update || true
-	apt -y upgrade
-
-	apt install -y "${pkgs[@]}" --no-install-recommends
 }
 
 # install custom scripts/binaries
@@ -467,7 +410,6 @@ usage() {
 	echo "Usage:"
 	echo "  base                                - setup sources & install base pkgs"
 	echo "  projects                            - setup projects folder"
-	echo "  graphics {intel, geforce, optimus}  - install graphics drivers"
 	echo "  wm                                  - install window manager/desktop pkgs"
 	echo "  dotfiles                            - get dotfiles"
 	echo "  vim                                 - install vim specific dotfiles"
@@ -493,15 +435,10 @@ main() {
 		setup_sources
 
 		base
-	elif [[ $cmd == "graphics" ]]; then
-		check_is_sudo
-
-		install_graphics "$2"
 	elif [[ $cmd == "projects" ]]; then
 		clone_projects
 	elif [[ $cmd == "wm" ]]; then
 		check_is_sudo
-
 		install_wmapps
 	elif [[ $cmd == "dotfiles" ]]; then
 		get_user
