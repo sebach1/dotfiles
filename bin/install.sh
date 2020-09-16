@@ -78,16 +78,13 @@ base() {
 		less \
 		lua5.2 \
 		make \
-		python3-pip \
-		python3-setuptools \
 		silversearcher-ag \
-		ssh \
 		sudo \
 		tar \
 		tree \
 		tzdata \
 		unzip \
-		vim-gnome \
+		vim-gtk3 \
 		zip \
 		--no-install-recommends
 
@@ -95,13 +92,13 @@ base() {
 
 	# Docker installation (https://github.com/docker/docker-install)
 	if ! [ -x "$(command -v docker)" ]; then
-		curl -fsSL https://get.docker.com -o ~/Downloads/docker.sh
-		bash ~/Downloads/docker.sh
+		curl -fsSL https://get.docker.com -o /home/$TARGET_USER/Downloads/docker.sh
+		bash /home/$TARGET_USER/Downloads/docker.sh
 	fi
 
 	if ! [ -x "$(command -v bat)" ]; then
-		wget -O ~/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.11.0/bat_0.11.0_amd64.deb
-		dpkg -i ~/Downloads/bat.deb
+		wget -O /home/$TARGET_USER/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.15.4/bat_0.15.4_amd64.deb
+		dpkg -i /home/$TARGET_USER/Downloads/bat.deb
 	fi
 
 	if ! [ -x "$(command -v we)" ]; then
@@ -110,8 +107,8 @@ base() {
 
 	# fd
 	if ! [ -x "$(command -v fd)" ]; then
-		wget -O ~/Downloads/fd.deb https://github.com/sharkdp/fd/releases/download/v7.4.0/fd-musl_7.4.0_amd64.deb
-		dpkg -i ~/Downloads/fd.deb
+		wget -O /home/$TARGET_USER/Downloads/fd.deb https://github.com/sharkdp/fd/releases/download/v8.1.1/fd-musl_8.1.1_amd64.deb
+		dpkg -i /home/$TARGET_USER/Downloads/fd.deb
 	fi
 
 	# vscode
@@ -248,8 +245,8 @@ install_golang() {
 
 clone_projects_to() {
 	for project in $3; do
-		mkdir -p "${HOME}/projects/${1}"
-		projdir="${HOME}/projects/${1}/${project}"
+		mkdir -p "/home/${TARGET_USER}/projects/${1}"
+		projdir="/home/${TARGET_USER}/projects/${1}/${project}"
 		if [[ ! -d $projdir ]]; then
 			git clone "${2}:${project}.git" $projdir
 		else
@@ -280,14 +277,14 @@ install_scripts() {
 	chmod +x /usr/local/bin/git-icdiff
 
 	# install fuzzy finder (fzf)
-	if [[ ! -d "${HOME}/.fzf" ]]; then
-		git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-		~/.fzf/install
+	if [[ ! -d "/home/${TARGET_USER}/.fzf" ]]; then
+		git clone --depth 1 https://github.com/junegunn/fzf.git /home/$TARGET_USER/.fzf
+		/home/$TARGET_USER/.fzf/install
 	fi
 
 	# install z lua
-	if [[ ! -d "${HOME}/.z.lua" ]]; then
-		git clone https://github.com/skywind3000/z.lua ~/.z.lua
+	if [[ ! -d "/home/${TARGET_USER}/.z.lua" ]]; then
+		git clone https://github.com/skywind3000/z.lua /home/$TARGET_USER/.z.lua
 	fi
 
 
@@ -340,14 +337,14 @@ install_wmapps() {
 get_dotfiles() {
 	# create subshell
 	(
-	cd "$HOME"
+	cd "/home/$TARGET_USER"
 
-	if [[ ! -d "${HOME}/dotfiles" ]]; then
+	if [[ ! -d "/home/${TARGET_USER}/dotfiles" ]]; then
 		# install dotfiles from repo
-		git clone git@github.com:sebach1/dotfiles.git "${HOME}/dotfiles"
+		git clone git@github.com:sebach1/dotfiles.git "/home/${TARGET_USER}/dotfiles"
 	fi
 
-	cd "${HOME}/dotfiles"
+	cd "/home/${TARGET_USER}/dotfiles"
 
 	# set the correct origin
 	git remote set-url origin git@github.com:sebach1/dotfiles.git
@@ -361,8 +358,8 @@ get_dotfiles() {
 	sudo systemctl enable "i3lock@${TARGET_USER}"
 	sudo systemctl enable suspend-sedation.service
 
-	cd "$HOME"
-	mkdir -p ~/Pictures/Screenshots
+	cd "/home/$TARGET_USER"
+	mkdir -p /home/$TARGET_USER/Pictures/Screenshots
 	)
 
 	install_vim;
@@ -371,13 +368,13 @@ get_dotfiles() {
 install_vim() {
 	# create subshell
 	(
-	cd "$HOME"
+	cd "/home/$TARGET_USER"
 
 	# install .vim files
-	sudo rm -rf "${HOME}/.vim"
-	git clone --recursive git@github.com:sebach1/.vim.git "${HOME}/.vim"
+	sudo rm -rf "/home/${TARGET_USER}/.vim"
+	git clone --recursive git@github.com:sebach1/.vim.git "/home/${TARGET_USER}/.vim"
 	(
-	cd "${HOME}/.vim"
+	cd "/home/${TARGET_USER}/.vim"
 	make install
 	)
 
@@ -421,6 +418,7 @@ usage() {
 
 main() {
 	local cmd=$1
+	get_user
 
 	if [[ -z "$cmd" ]]; then
 		usage
@@ -429,7 +427,6 @@ main() {
 
 	if [[ $cmd == "base" ]]; then
 		check_is_sudo
-		get_user
 
 		# setup /etc/apt/sources.list
 		setup_sources
@@ -441,7 +438,6 @@ main() {
 		check_is_sudo
 		install_wmapps
 	elif [[ $cmd == "dotfiles" ]]; then
-		get_user
 		get_dotfiles
 	elif [[ $cmd == "vim" ]]; then
 		install_vim
