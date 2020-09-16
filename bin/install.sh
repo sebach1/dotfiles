@@ -73,7 +73,6 @@ base() {
 		git \
 		grep \
 		gzip \
-		iptables \
 		jq \
 		less \
 		lua5.2 \
@@ -87,9 +86,8 @@ base() {
 		vim-gtk3 \
 		zip \
 		--no-install-recommends
-
-#	pip3 install thefuck
-
+			echo $TARGET_USER 
+ return	
 	# Docker installation (https://github.com/docker/docker-install)
 	if ! [ -x "$(command -v docker)" ]; then
 		curl -fsSL https://get.docker.com -o /home/$TARGET_USER/Downloads/docker.sh
@@ -427,7 +425,6 @@ main() {
 
 	if [[ $cmd == "base" ]]; then
 		check_is_sudo
-
 		# setup /etc/apt/sources.list
 		setup_sources
 
