@@ -84,8 +84,7 @@ base() {
 		vim-gtk3 \
 		zip \
 		--no-install-recommends
-			echo $TARGET_USER 
- return	
+
 	# Docker installation (https://github.com/docker/docker-install)
 	if ! [ -x "$(command -v docker)" ]; then
 		curl -fsSL https://get.docker.com -o /home/$TARGET_USER/Downloads/docker.sh
@@ -132,11 +131,6 @@ setup_sudo() {
 	# add user to sudoers
 	adduser "$TARGET_USER" sudo
 
-	# add user to systemd groups
-	# then you wont need sudo to view logs and shit
-	gpasswd -a "$TARGET_USER" systemd-journal
-	gpasswd -a "$TARGET_USER" systemd-network
-
 	# setup downloads folder as tmpfs
 	# that way things are removed on reboot
 	mkdir -p "/home/$TARGET_USER/Downloads"
@@ -145,9 +139,7 @@ setup_sudo() {
 	# add go path to secure path
 	{ \
 		echo -e "Defaults	secure_path=\"/usr/local/go/bin:/home/${TARGET_USER}/.go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/share/bcc/tools:/home/${TARGET_USER}/.cargo/bin\""; \
-		echo -e 'Defaults	env_keep += "ftp_proxy http_proxy https_proxy no_proxy GOPATH EDITOR"'; \
 		echo -e "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL"; \
-		echo -e "${TARGET_USER} ALL=NOPASSWD: /sbin/ifconfig, /sbin/ifup, /sbin/ifdown, /sbin/ifquery"; \
 	} >> /etc/sudoers
 	# create docker group
 	sudo groupadd docker
