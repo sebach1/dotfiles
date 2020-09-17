@@ -435,15 +435,6 @@ govendorcheck() {
 	vendorcheck -u ./... | awk '{print $NF}' | sed -e "s#^github.com/jessfraz/$(basename $(pwd))/##"
 }
 
-restart_gpgagent(){
-	# Restart the gpg agent.
-	# shellcheck disable=SC2046
-	kill -9 $(pidof scdaemon) >/dev/null 2>&1
-	# shellcheck disable=SC2046
-	kill -9 $(pidof gpg-agent) >/dev/null 2>&1
-	gpg-connect-agent /bye >/dev/null 2>&1
-	gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
-}
 
 hmrandr() {
 	# This function sets the xrandr display modes for my desk in NYC.

@@ -16,9 +16,6 @@ dotfiles: ## Installs the dotfiles.
 		f=$$(basename $$file); \
 		ln -sfn $$file $(HOME)/$$f; \
 	done; \
-	gpg --list-keys || true;
-	ln -sfn $(CURDIR)/.gnupg/gpg.conf $(HOME)/.gnupg/gpg.conf;
-	ln -sfn $(CURDIR)/.gnupg/gpg-agent.conf $(HOME)/.gnupg/gpg-agent.conf;
 	ln -fn $(CURDIR)/gitignore $(HOME)/.gitignore;
 	git update-index --skip-worktree $(CURDIR)/.gitconfig;
 	mkdir -p $(HOME)/.config;
@@ -26,9 +23,6 @@ dotfiles: ## Installs the dotfiles.
 	mkdir -p $(HOME)/.local/share;
 	ln -snf $(CURDIR)/.fonts $(HOME)/.local/share/fonts;
 	ln -snf $(CURDIR)/.bash_profile $(HOME)/.profile;
-	if [ -f /usr/local/bin/pinentry ]; then \
-		sudo ln -snf /usr/bin/pinentry /usr/local/bin/pinentry; \
-	fi;
 	mkdir -p $(HOME)/Pictures;
 	ln -snf $(CURDIR)/wp.png $(HOME)/Pictures/wp.png;
 	mkdir -p $(HOME)/.config/fontconfig;
@@ -39,7 +33,6 @@ dotfiles: ## Installs the dotfiles.
 
 .PHONY: etc
 etc: ## Installs the etc directory files.
-	sudo mkdir -p /etc/docker/seccomp
 	for file in $(shell find $(CURDIR)/etc -type f -not -name ".*.swp"); do \
 		f=$$(echo $$file | sed -e 's|$(CURDIR)||'); \
 		sudo mkdir -p $$(dirname $$f); \

@@ -64,9 +64,7 @@ base() {
 	apt install -y \
 		automake \
 		bash-completion \
-		ca-certificates \
 		clipit \
-		coreutils \
 		curl \
 		fonts-firacode \
 		gcc \
@@ -142,7 +140,7 @@ setup_sudo() {
 	# setup downloads folder as tmpfs
 	# that way things are removed on reboot
 	mkdir -p "/home/$TARGET_USER/Downloads"
-	echo -e "\\n# tmpfs for downloads\\ntmpfs\\t/home/${TARGET_USER}/Downloads\\ttmpfs\\tnodev,nosuid,size=2G\\t0\\t0" >> /etc/fstab
+	echo -e "\\n# tmpfs for downloads\\ntmpfs\\t/home/${TARGET_USER}/Downloads\\ttmpfs\\tnodev,nosuid,size=5G\\t0\\t0" >> /etc/fstab
 
 	# add go path to secure path
 	{ \
@@ -241,26 +239,6 @@ install_golang() {
 	sudo ln -snf "${GOPATH}/bin/weather" /usr/local/bin/weather
 }
 
-clone_projects_to() {
-	for project in $3; do
-		mkdir -p "/home/${TARGET_USER}/projects/${1}"
-		projdir="/home/${TARGET_USER}/projects/${1}/${project}"
-		if [[ ! -d $projdir ]]; then
-			git clone "${2}:${project}.git" $projdir
-		else
-			echo "${project} already in projects"
-		fi
-	done
-}
-
-clone_projects() {
-#	tk=(  )
-#	we=(  )
-	hub=( sebach1/rtc )
-	clone_projects_to hub git@github.com $hub
-#	clone_projects_to(we, $we, git@gitlab.web-experto.com.ar)
-#	clone_projects_to(tk, $tk, git@gitlab.web-experto.com.ar)
-}
 
 # install custom scripts/binaries
 install_scripts() {
@@ -324,12 +302,7 @@ install_wmapps() {
 	# pretty fonts
 	curl -sSL https://raw.githubusercontent.com/jessfraz/dotfiles/master/etc/fonts/local.conf > /etc/fonts/local.conf
 
-	echo "Fonts file setup successfully now run:"
-	echo "	dpkg-reconfigure fontconfig-config"
-	echo "with settings: "
-	echo "	Autohinter, Automatic, No."
-	echo "Run: "
-	echo "	dpkg-reconfigure fontconfig"
+	dpkg-reconfigure fontconfig
 }
 
 get_dotfiles() {
