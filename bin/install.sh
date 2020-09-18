@@ -86,10 +86,10 @@ base() {
 		--no-install-recommends
 
 	# Docker installation (https://github.com/docker/docker-install)
-	if ! [ -x "$(command -v docker)" ]; then
-		curl -fsSL https://get.docker.com -o /home/$TARGET_USER/Downloads/docker.sh
-		bash /home/$TARGET_USER/Downloads/docker.sh
-	fi
+	# if ! [ -x "$(command -v docker)" ]; then
+	# 	curl -fsSL https://get.docker.com -o /home/$TARGET_USER/Downloads/docker.sh
+	# 	bash /home/$TARGET_USER/Downloads/docker.sh
+	# fi
 
 	if ! [ -x "$(command -v bat)" ]; then
 		wget -O /home/$TARGET_USER/Downloads/bat.deb https://github.com/sharkdp/bat/releases/download/v0.15.4/bat_0.15.4_amd64.deb
@@ -214,18 +214,6 @@ install_golang() {
 
 	# Autocompletion for go cli
 	go get -u github.com/posener/complete/gocomplete
-
-
-
-	# do special things for k8s GOPATH
-	mkdir -p "${GOPATH}/src/k8s.io"
-	kubes_repos=( kubernetes )
-	for krepo in "${kubes_repos[@]}"; do
-		git clone "https://github.com/kubernetes/${krepo}.git" "${GOPATH}/src/k8s.io/${krepo}"
-		cd "${GOPATH}/src/k8s.io/${krepo}"
-		git remote set-url --push origin no_push
-	done
-	)
 
 	# symlink weather binary for motd
 	sudo ln -snf "${GOPATH}/bin/weather" /usr/local/bin/weather
